@@ -18,9 +18,14 @@ main = do args <- getArgs
 symbol :: Parser Char
 symbol = oneOf "!#$%&|*+-/:<=>?@^_~"
 
+escapedChars :: Parser Char
+escapedChars = do char '\\'
+                  x <- oneOf "\\\""
+                  return x
+
 parseString :: Parser LispVal
 parseString = do char '"'
-                 x <- many (noneOf "\"")
+                 x <- many $ escapedChars <|> noneOf "\"\\"
                  char '"'
                  return $ String x
 
